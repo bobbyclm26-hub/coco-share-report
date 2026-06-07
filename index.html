@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>COCO SHARE Report</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="COCO SHARE">
+<meta name="theme-color" content="#0F0F2D">
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&family=Outfit:wght@400;600;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --lime: #C8F135;
+    --coral: #FF5C5C;
+    --navy: #0F0F2D;
+    --cream: #FFFBF0;
+    --pink: #FFB5C8;
+    --sky: #7DD8F8;
+    --purple: #C4A9FF;
+    --orange: #FF9140;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--cream);
+    font-family: 'Zen Maru Gothic', sans-serif;
+    color: var(--navy);
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  /* ── PRINT ── */
+  @media print {
+    body { background: white; }
+    .no-print { display: none !important; }
+    .sheet { box-shadow: none !important; border-radius: 0 !important; margin: 0 !important; }
+    @page { margin: 10mm; }
+  }
+
+  /* ── WRAPPER ── */
+  .wrapper {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 32px 16px 60px;
+  }
+
+  /* ── SHEET ── */
+  .sheet {
+    background: white;
+    border-radius: 32px;
+    overflow: hidden;
+    box-shadow: 8px 8px 0px var(--navy);
+    border: 3px solid var(--navy);
+    animation: slideUp .6s cubic-bezier(.16,1,.3,1) both;
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: var(--navy);
+    padding: 36px 40px 32px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .header::before {
+    content: '';
+    position: absolute;
+    width: 300px; height: 300px;
+    background: var(--lime);
+    border-radius: 50%;
+    right: -80px; top: -100px;
+    opacity: .18;
+  }
+  .header::after {
+    content: '';
+    position: absolute;
+    width: 180px; height: 180px;
+    background: var(--coral);
+    border-radius: 50%;
+    left: -40px; bottom: -60px;
+    opacity: .22;
+  }
+
+  .badge {
+    display: inline-block;
+    background: var(--lime);
+    color: var(--navy);
+    font-family: 'Outfit', sans-serif;
+    font-weight: 900;
+    font-size: 11px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    padding: 4px 14px;
+    border-radius: 999px;
+    margin-bottom: 14px;
+  }
+
+  .header h1 {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 900;
+    font-size: clamp(28px, 5vw, 44px);
+    color: white;
+    line-height: 1.1;
+    letter-spacing: -.02em;
+  }
+
+  .header h1 span {
+    color: var(--lime);
+  }
+
+  .header-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 22px;
+  }
+
+  .meta-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .meta-label {
+    font-size: 10px;
+    color: rgba(255,255,255,.5);
+    letter-spacing: .1em;
+    text-transform: uppercase;
+  }
+
+  .meta-input {
+    background: rgba(255,255,255,.1);
+    border: 1.5px solid rgba(255,255,255,.2);
+    border-radius: 10px;
+    padding: 8px 14px;
+    color: white;
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: 14px;
+    min-width: 160px;
+    outline: none;
+    transition: border .2s, background .2s;
+  }
+  .meta-input:focus {
+    border-color: var(--lime);
+    background: rgba(200,241,53,.08);
+  }
+  .meta-input::placeholder { color: rgba(255,255,255,.3); }
+
+  /* ── BODY ── */
+  .body {
+    padding: 36px 40px 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  /* ── SECTION TITLE ── */
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 800;
+    font-size: 13px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--navy);
+    margin-bottom: 14px;
+  }
+  .section-title .dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* ── MENU SECTION ── */
+  .menu-card {
+    background: var(--navy);
+    border-radius: 20px;
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .menu-icon {
+    font-size: 28px;
+    flex-shrink: 0;
+  }
+  .menu-fields {
+    display: flex;
+    flex: 1;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .menu-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+    min-width: 140px;
+  }
+  .menu-field label {
+    font-size: 10px;
+    color: rgba(255,255,255,.45);
+    letter-spacing: .1em;
+    text-transform: uppercase;
+  }
+  .menu-field input, .menu-field select {
+    background: rgba(255,255,255,.08);
+    border: 1.5px solid rgba(255,255,255,.15);
+    border-radius: 10px;
+    padding: 9px 13px;
+    color: white;
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: 14px;
+    outline: none;
+    transition: border .2s;
+  }
+  .menu-field input:focus, .menu-field select:focus {
+    border-color: var(--lime);
+  }
+  .menu-field input::placeholder { color: rgba(255,255,255,.25); }
+  .menu-field select option { background: #1a1a3a; color: white; }
+
+  /* ── RATING GRID ── */
+  .rating-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+  }
+
+  .rating-card {
+    border-radius: 20px;
+    padding: 20px 22px;
+    border: 2px solid var(--navy);
+    position: relative;
+    overflow: hidden;
+    transition: transform .15s;
+  }
+  .rating-card:hover { transform: translateY(-2px); }
+
+  .rating-card.taste   { background: #FFF3E8; }
+  .rating-card.service { background: #EAF9FF; }
+  .rating-card.ambiance{ background: #F3F0FF; }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+
+  .card-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    font-size: 15px;
+  }
+
+  .card-emoji { font-size: 20px; }
+
+  /* STAR RATING */
+  .stars {
+    display: flex;
+    gap: 4px;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+  }
+  .stars input { display: none; }
+  .stars label {
+    font-size: 28px;
+    cursor: pointer;
+    color: #DDD;
+    transition: color .15s, transform .1s;
+    line-height: 1;
+  }
+  .stars label:hover,
+  .stars label:hover ~ label,
+  .stars input:checked ~ label {
+    color: var(--orange);
+  }
+  .stars label:hover { transform: scale(1.15); }
+
+  .score-display {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 900;
+    font-size: 32px;
+    color: var(--navy);
+    line-height: 1;
+  }
+  .score-display span {
+    font-size: 14px;
+    font-weight: 600;
+    opacity: .4;
+  }
+
+  .card-sub-note {
+    font-size: 11px;
+    opacity: .5;
+    margin-top: 2px;
+  }
+
+  /* ── OVERALL ── */
+  .overall-section {
+    background: linear-gradient(135deg, var(--lime) 0%, #9DEF00 100%);
+    border-radius: 20px;
+    padding: 24px 26px;
+    border: 2px solid var(--navy);
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  .overall-left {
+    flex: 0 0 auto;
+  }
+
+  .overall-label {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 800;
+    font-size: 12px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    opacity: .6;
+    margin-bottom: 6px;
+  }
+
+  .overall-score {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 900;
+    font-size: 64px;
+    line-height: 1;
+    color: var(--navy);
+  }
+  .overall-score small {
+    font-size: 22px;
+    opacity: .45;
+  }
+
+  .overall-stars {
+    display: flex;
+    gap: 4px;
+    margin-top: 6px;
+  }
+
+  .overall-stars input { display: none; }
+  .overall-stars label {
+    font-size: 32px;
+    cursor: pointer;
+    color: rgba(15,15,45,.25);
+    transition: color .15s, transform .1s;
+    flex-direction: row-reverse;
+  }
+  .overall-stars {
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+  }
+  .overall-stars label:hover,
+  .overall-stars label:hover ~ label,
+  .overall-stars input:checked ~ label {
+    color: var(--navy);
+  }
+  .overall-stars label:hover { transform: scale(1.12); }
+
+  .overall-right {
+    flex: 1;
+    min-width: 200px;
+  }
+
+  .recommend-label {
+    font-weight: 700;
+    font-size: 14px;
+    margin-bottom: 10px;
+    color: var(--navy);
+  }
+
+  .recommend-options {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .recommend-options input { display: none; }
+  .recommend-options label {
+    padding: 9px 18px;
+    border-radius: 999px;
+    border: 2px solid var(--navy);
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+    background: rgba(255,255,255,.4);
+    transition: background .15s, transform .1s;
+    color: var(--navy);
+  }
+  .recommend-options input:checked + label {
+    background: var(--navy);
+    color: var(--lime);
+    transform: scale(1.05);
+  }
+  .recommend-options label:hover {
+    background: rgba(255,255,255,.7);
+  }
+
+  /* ── COMMENT ── */
+  .comment-section textarea {
+    width: 100%;
+    min-height: 120px;
+    border: 2px solid var(--navy);
+    border-radius: 16px;
+    padding: 16px 18px;
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: 14px;
+    line-height: 1.8;
+    resize: vertical;
+    outline: none;
+    transition: border .2s, box-shadow .2s;
+    background: var(--cream);
+    color: var(--navy);
+  }
+  .comment-section textarea:focus {
+    border-color: var(--coral);
+    box-shadow: 0 0 0 4px rgba(255,92,92,.1);
+  }
+  .comment-section textarea::placeholder { color: rgba(15,15,45,.3); }
+
+  /* ── GOOD / BAD ── */
+  .feedback-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  @media (max-width: 500px) {
+    .feedback-grid { grid-template-columns: 1fr; }
+  }
+
+  .feedback-card {
+    border-radius: 16px;
+    padding: 16px 18px;
+    border: 2px solid var(--navy);
+  }
+  .feedback-card.good { background: #EDFFD6; }
+  .feedback-card.bad  { background: #FFE8E8; }
+
+  .feedback-card-title {
+    font-weight: 700;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+
+  .feedback-card textarea {
+    width: 100%;
+    min-height: 80px;
+    border: 1.5px solid rgba(15,15,45,.15);
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: 13px;
+    line-height: 1.7;
+    resize: vertical;
+    outline: none;
+    background: rgba(255,255,255,.6);
+    color: var(--navy);
+    transition: border .2s;
+  }
+  .feedback-card textarea:focus { border-color: var(--navy); }
+  .feedback-card textarea::placeholder { color: rgba(15,15,45,.3); }
+
+  /* ── FOOTER / SUBMIT ── */
+  .footer-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 14px;
+    padding: 20px 40px 32px;
+    border-top: 2px dashed rgba(15,15,45,.1);
+  }
+
+  .reporter-field {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .reporter-field label {
+    font-weight: 700;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+  .reporter-field input {
+    border: 2px solid var(--navy);
+    border-radius: 10px;
+    padding: 8px 14px;
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: 14px;
+    outline: none;
+    background: var(--cream);
+    color: var(--navy);
+    transition: border .2s;
+    width: 180px;
+  }
+  .reporter-field input:focus { border-color: var(--coral); }
+  .reporter-field input::placeholder { color: rgba(15,15,45,.3); }
+
+  .btn-group {
+    display: flex;
+    gap: 10px;
+  }
+
+  .btn {
+    padding: 12px 26px;
+    border-radius: 999px;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 800;
+    font-size: 14px;
+    cursor: pointer;
+    border: 2.5px solid var(--navy);
+    transition: transform .12s, box-shadow .12s;
+    letter-spacing: .04em;
+  }
+  .btn:active { transform: scale(.97); }
+
+  .btn-secondary {
+    background: white;
+    color: var(--navy);
+    box-shadow: 3px 3px 0 var(--navy);
+  }
+  .btn-secondary:hover { box-shadow: 5px 5px 0 var(--navy); }
+
+  .btn-primary {
+    background: var(--coral);
+    color: white;
+    box-shadow: 3px 3px 0 var(--navy);
+  }
+  .btn-primary:hover { box-shadow: 5px 5px 0 var(--navy); }
+
+  /* ── PHOTO GRID ── */
+  .photo-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  @media (max-width: 480px) {
+    .photo-grid { grid-template-columns: 1fr; }
+  }
+  .photo-slot {
+    border: 2.5px dashed var(--navy);
+    border-radius: 20px;
+    aspect-ratio: 4/3;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    background: var(--cream);
+    transition: border-color .2s, background .2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .photo-slot:hover {
+    border-color: var(--coral);
+    background: #fff5f5;
+  }
+  .photo-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    pointer-events: none;
+  }
+  .photo-icon { font-size: 32px; }
+  .photo-label {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 800;
+    font-size: 15px;
+    color: var(--navy);
+  }
+  .photo-sub {
+    font-size: 11px;
+    opacity: .4;
+  }
+  .photo-preview {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+    inset: 0;
+  }
+  .photo-remove {
+    position: absolute;
+    top: 8px; right: 8px;
+    background: var(--coral);
+    color: white;
+    border: none;
+    border-radius: 999px;
+    width: 28px; height: 28px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,.2);
+    transition: transform .1s;
+    z-index: 10;
+  }
+  .photo-remove:hover { transform: scale(1.1); }
+
+  /* ── DECORATIVE CHIPS ── */
+  .deco-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: -8px;
+  }
+  .deco-chip {
+    background: var(--cream);
+    border: 2px solid var(--navy);
+    border-radius: 999px;
+    padding: 4px 14px;
+    font-size: 12px;
+    font-weight: 700;
+    opacity: .5;
+  }
+</style>
+</head>
+<body>
+
+<div class="wrapper">
+  <div class="sheet">
+
+    <!-- ── HEADER ── -->
+    <div class="header">
+      <h1>COCO SHARE<br><span>Report</span></h1>
+      <div class="header-meta">
+        <div class="meta-field">
+          <span class="meta-label">📅 訪店日</span>
+          <input class="meta-input" type="date" id="visit-date">
+        </div>
+        <div class="meta-field">
+          <span class="meta-label">🏪 店舗名</span>
+          <input class="meta-input" type="text" placeholder="例）ふじ食堂 本店" id="shop-name">
+        </div>
+        <div class="meta-field">
+          <span class="meta-label">🕐 訪店時間</span>
+          <input class="meta-input" type="text" placeholder="例）12:00〜13:00 ランチ" id="visit-time">
+        </div>
+      </div>
+    </div>
+
+    <!-- ── BODY ── -->
+    <div class="body">
+
+      <!-- MENU -->
+      <div>
+        <div class="section-title">
+          <span class="dot" style="background:var(--orange)"></span>
+          オーダー情報
+        </div>
+        <div class="menu-card">
+          <div class="menu-icon">🍽️</div>
+          <div class="menu-fields">
+            <div class="menu-field">
+              <label>メニュー名①</label>
+              <input type="text" placeholder="例）からあげ定食">
+            </div>
+            <div class="menu-field">
+              <label>メニュー名②</label>
+              <input type="text" placeholder="例）みそ汁・デザート">
+            </div>
+            <div class="menu-field">
+              <label>提供時間</label>
+              <select>
+                <option value="">選んでね</option>
+                <option>5分未満</option>
+                <option>10分未満</option>
+                <option>10分以上</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RATINGS -->
+      <div>
+        <div class="section-title">
+          <span class="dot" style="background:var(--coral)"></span>
+          項目別評価
+        </div>
+        <div class="rating-grid">
+
+          <!-- 味 -->
+          <div class="rating-card taste">
+            <div class="card-header">
+              <div class="card-label">
+                <span class="card-emoji">😋</span>
+                料理の味・クオリティ
+              </div>
+            </div>
+            <div class="stars">
+              <input type="radio" name="taste" id="t5" value="5"><label for="t5">★</label>
+              <input type="radio" name="taste" id="t4" value="4"><label for="t4">★</label>
+              <input type="radio" name="taste" id="t3" value="3"><label for="t3">★</label>
+              <input type="radio" name="taste" id="t2" value="2"><label for="t2">★</label>
+              <input type="radio" name="taste" id="t1" value="1"><label for="t1">★</label>
+            </div>
+            <div class="card-sub-note" style="margin-top:8px">味のバランス・盛り付け・温度感など</div>
+          </div>
+
+          <!-- サービス -->
+          <div class="rating-card service">
+            <div class="card-header">
+              <div class="card-label">
+                <span class="card-emoji">👋</span>
+                接客・サービス
+              </div>
+            </div>
+            <div class="stars">
+              <input type="radio" name="service" id="s5" value="5"><label for="s5">★</label>
+              <input type="radio" name="service" id="s4" value="4"><label for="s4">★</label>
+              <input type="radio" name="service" id="s3" value="3"><label for="s3">★</label>
+              <input type="radio" name="service" id="s2" value="2"><label for="s2">★</label>
+              <input type="radio" name="service" id="s1" value="1"><label for="s1">★</label>
+            </div>
+            <div class="card-sub-note" style="margin-top:8px">声かけ・笑顔・対応スピードなど</div>
+          </div>
+
+          <!-- 雰囲気 -->
+          <div class="rating-card ambiance">
+            <div class="card-header">
+              <div class="card-label">
+                <span class="card-emoji">✨</span>
+                店内の雰囲気・清潔感
+              </div>
+            </div>
+            <div class="stars">
+              <input type="radio" name="ambiance" id="a5" value="5"><label for="a5">★</label>
+              <input type="radio" name="ambiance" id="a4" value="4"><label for="a4">★</label>
+              <input type="radio" name="ambiance" id="a3" value="3"><label for="a3">★</label>
+              <input type="radio" name="ambiance" id="a2" value="2"><label for="a2">★</label>
+              <input type="radio" name="ambiance" id="a1" value="1"><label for="a1">★</label>
+            </div>
+            <div class="card-sub-note" style="margin-top:8px">テーブル・トイレ・BGM・照明など</div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- OVERALL -->
+      <div>
+        <div class="section-title">
+          <span class="dot" style="background:var(--lime)"></span>
+          総合評価
+        </div>
+        <div class="overall-section">
+          <div class="overall-left">
+            <div class="overall-label">Overall Rating</div>
+            <div class="overall-stars">
+              <input type="radio" name="overall" id="o5" value="5"><label for="o5">★</label>
+              <input type="radio" name="overall" id="o4" value="4"><label for="o4">★</label>
+              <input type="radio" name="overall" id="o3" value="3"><label for="o3">★</label>
+              <input type="radio" name="overall" id="o2" value="2"><label for="o2">★</label>
+              <input type="radio" name="overall" id="o1" value="1"><label for="o1">★</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- GOOD / BAD -->
+      <div>
+        <div class="section-title">
+          <span class="dot" style="background:var(--purple)"></span>
+          フィードバック詳細
+        </div>
+        <div class="feedback-grid">
+          <div class="feedback-card good">
+            <div class="feedback-card-title">👍 よかったこと</div>
+            <textarea placeholder="ここに書いてね！&#10;例）店員さんの笑顔が素敵でした"></textarea>
+          </div>
+          <div class="feedback-card bad">
+            <div class="feedback-card-title">👎 気になったこと</div>
+            <textarea placeholder="ここに書いてね！&#10;例）席が少し狭く感じました"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- COMMENT -->
+      <div class="comment-section">
+        <div class="section-title">
+          <span class="dot" style="background:var(--sky)"></span>
+          総合コメント・その他メモ
+        </div>
+        <textarea placeholder="全体の感想、改善提案、気づいたことなど自由に書いてね 📝"></textarea>
+      </div>
+
+      <!-- PHOTOS -->
+      <div>
+        <div class="section-title">
+          <span class="dot" style="background:var(--pink)"></span>
+          フォト
+        </div>
+        <div class="photo-grid">
+          <div class="photo-slot" id="slot1" onclick="document.getElementById('file1').click()">
+            <input type="file" id="file1" accept="image/*" style="display:none" onchange="previewPhoto(this,'preview1','placeholder1','remove1')">
+            <div class="photo-placeholder" id="placeholder1">
+              <span class="photo-icon">📷</span>
+              <span class="photo-label">写真 1</span>
+              <span class="photo-sub">タップして追加</span>
+            </div>
+            <img id="preview1" class="photo-preview" style="display:none">
+            <button class="photo-remove" id="remove1" style="display:none" onclick="removePhoto(event,'file1','preview1','placeholder1','remove1')">✕</button>
+          </div>
+          <div class="photo-slot" id="slot2" onclick="document.getElementById('file2').click()">
+            <input type="file" id="file2" accept="image/*" style="display:none" onchange="previewPhoto(this,'preview2','placeholder2','remove2')">
+            <div class="photo-placeholder" id="placeholder2">
+              <span class="photo-icon">📷</span>
+              <span class="photo-label">写真 2</span>
+              <span class="photo-sub">タップして追加</span>
+            </div>
+            <img id="preview2" class="photo-preview" style="display:none">
+            <button class="photo-remove" id="remove2" style="display:none" onclick="removePhoto(event,'file2','preview2','placeholder2','remove2')">✕</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ── FOOTER ── -->
+    <div class="footer-row">
+      <div class="reporter-field">
+        <label>🙋 訪店者</label>
+        <input type="text" placeholder="お名前">
+      </div>
+      <div class="btn-group no-print">
+        <button class="btn btn-secondary" onclick="window.print()">🖨️ 印刷 / PDF</button>
+        <button class="btn btn-primary" id="submit-btn" onclick="submitReport()">📨 提出する</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const GAS_URL = 'https://script.google.com/macros/s/AKfycbzP0athaH3vW9nSLRO2zessfttFKbkU9HC3fBuOs_OvLsFykpM1UWUHAxeeYtQImtKhRw/exec';
+
+  // 今日の日付をデフォルトにセット
+  const d = document.getElementById('visit-date');
+  if (d) {
+    const today = new Date();
+    const y = today.getFullYear();
+    const m = String(today.getMonth()+1).padStart(2,'0');
+    const day = String(today.getDate()).padStart(2,'0');
+    d.value = `${y}-${m}-${day}`;
+  }
+
+  function previewPhoto(input, previewId, placeholderId, removeId) {
+    const file = input.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = document.getElementById(previewId);
+      img.src = e.target.result;
+      img.style.display = 'block';
+      document.getElementById(placeholderId).style.display = 'none';
+      document.getElementById(removeId).style.display = 'flex';
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function removePhoto(event, fileId, previewId, placeholderId, removeId) {
+    event.stopPropagation();
+    document.getElementById(fileId).value = '';
+    const img = document.getElementById(previewId);
+    img.src = '';
+    img.style.display = 'none';
+    document.getElementById(placeholderId).style.display = 'flex';
+    document.getElementById(removeId).style.display = 'none';
+  }
+
+  function getRadioValue(name) {
+    const el = document.querySelector(`input[name="${name}"]:checked`);
+    return el ? el.value : '';
+  }
+
+  function showToast(msg, type = 'success') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'toast show ' + type;
+    setTimeout(() => t.className = 'toast', 3000);
+  }
+
+  async function submitReport() {
+    const btn = document.getElementById('submit-btn');
+
+    // 訪店者チェック
+    const reporter = document.querySelector('.reporter-field input').value.trim();
+    if (!reporter) { showToast('⚠️ 訪店者名を入力してね', 'error'); return; }
+
+    // データ収集
+    const textareas = document.querySelectorAll('textarea');
+    const payload = {
+      visitDate  : document.getElementById('visit-date').value,
+      shopName   : document.getElementById('shop-name').value,
+      visitTime  : document.getElementById('visit-time').value,
+      menu1      : document.querySelectorAll('.menu-field input')[0]?.value || '',
+      menu2      : document.querySelectorAll('.menu-field input')[1]?.value || '',
+      serveTime  : document.querySelector('.menu-field select')?.value || '',
+      taste      : getRadioValue('taste'),
+      service    : getRadioValue('service'),
+      ambiance   : getRadioValue('ambiance'),
+      overall    : getRadioValue('overall'),
+      good       : textareas[0]?.value || '',
+      bad        : textareas[1]?.value || '',
+      comment    : textareas[2]?.value || '',
+      reporter,
+      photo1     : document.getElementById('preview1').src || '',
+      photo2     : document.getElementById('preview2').src || '',
+    };
+
+    // ボタンを送信中に
+    btn.textContent = '⏳ 送信中…';
+    btn.disabled = true;
+
+    try {
+      await fetch(GAS_URL, {
+        method : 'POST',
+        mode   : 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body   : JSON.stringify(payload),
+      });
+      showToast('✅ 提出完了！ありがとう！', 'success');
+      btn.textContent = '✅ 提出済み';
+    } catch (err) {
+      showToast('❌ 送信失敗。もう一度試してね', 'error');
+      btn.textContent = '📨 提出する';
+      btn.disabled = false;
+    }
+  }
+</script>
+
+<!-- トースト通知 -->
+<div id="toast" class="toast"></div>
+
+<style>
+  .toast {
+    position: fixed;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--navy);
+    color: white;
+    padding: 14px 28px;
+    border-radius: 999px;
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    opacity: 0;
+    transition: opacity .3s, transform .3s;
+    pointer-events: none;
+    z-index: 9999;
+    white-space: nowrap;
+    box-shadow: 0 4px 20px rgba(0,0,0,.25);
+  }
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  .toast.error  { background: var(--coral); }
+  .toast.success{ background: #2D7A2D; }
+</style>
+</body>
+</html>
