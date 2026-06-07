@@ -1,0 +1,15 @@
+{
+  "name": "COCO SHARE",
+  "short_name": "COCO SHARE",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "/coco-share-report/",
+  "display": "standalone",
+  "background_color": "#C8F135",
+  "theme_color": "#0F0F2D"
+}
